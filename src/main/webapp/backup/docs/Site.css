@@ -1,0 +1,12 @@
+@CHARSET "ISO-8859-1";
+
+html, body, .container{
+    height: 100%;
+}
+.container-fluid{
+    vertical-align: middle;
+}
+.vertical-center-row{
+    display: table-cell;
+    vertical-align: middle;
+}

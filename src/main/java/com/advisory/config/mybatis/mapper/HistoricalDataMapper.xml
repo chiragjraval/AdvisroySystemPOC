@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.advisory.dao.business.HistoricalDataDao">
+	
+	<!-- Result Maps -->
+	<resultMap id="HistoricalIndexRawDataMap" type="HistoricalIndexRawData" >
+		<id property="indexName" column="INDEX_NAME" />
+		<id property="date" column="DATE" />
+		<result property="openPrice" column="OPEN_PRICE" />
+		<result property="highPrice" column="HIGH_PRICE" />
+		<result property="lowPrice" column="LOW_PRICE" />
+		<result property="closePrice" column="CLOSE_PRICE" />
+		<result property="adjClosePrice" column="ADJ_CLOSE_PRICE" />
+		<result property="sharesTraded" column="SHARES_TRADED" />
+		<result property="turnover" column="TURNOVER" />
+	</resultMap>
+	
+	<resultMap id="HistoricalIndexDataMap" type="HistoricalIndexData" >
+		<id property="indexName" column="INDEX_NAME" />
+		<id property="date" column="DATE" />
+		<result property="openPrice" column="OPEN_PRICE" />
+		<result property="highPrice" column="HIGH_PRICE" />
+		<result property="lowPrice" column="LOW_PRICE" />
+		<result property="closePrice" column="CLOSE_PRICE" />
+		<result property="adjClosePrice" column="ADJ_CLOSE_PRICE" />
+		<result property="monthlyReturn" column="MONTHLY_RETURN" />
+		<result property="sharesTraded" column="SHARES_TRADED" />
+		<result property="turnover" column="TURNOVER" />
+	</resultMap>
+
+	<resultMap id="HistoricalIndexCoefficientDataMap" type="HistoricalIndexCoefficientData">
+		<id property="indexName" column="INDEX_NAME" />
+		<result property="smbCo" column="SMB_CO" />
+		<result property="hmlCo" column="HML_CO" />
+		<result property="wmlCo" column="WML_CO" />
+		<result property="excessReturnCo" column="EXCESS_RETURN_CO" />
+		<result property="alpha" column="ALPHA" />
+	</resultMap>
+	
+
+	<resultMap id="HistoricalIndexCovarianceDataMap" type="HistoricalIndexCovarianceData">
+		<id property="indexName1" column="INDEX_NAME1" />
+		<id property="indexName2" column="INDEX_NAME2" />
+		<result property="covariance" column="COVARIANCE" />
+	</resultMap>
+
+	<resultMap id="HistoricalIndexCoefficientProcessingUnitMap" type="HistoricalIndexCoefficientProcessingUnit">
+		<id property="indexName" column="INDEX_NAME" />
+		<id property="date" column="DATE" />
+		<result property="smbPercent" column="SMB_PERCENT" />
+		<result property="hmlPercent" column="HML_PERCENT" />
+		<result property="wmlPercent" column="WML_PERCENT" />
+		<result property="excessReturnPercent" column="EXCESS_RETURN" />
+		<result property="indexExcessReturn" column="MONTHLY_EXCESS_RETURN" />
+	</resultMap>
+
+	<resultMap id="HistoricalIndexCovarianceProcessingUnitMap" type="HistoricalIndexCovarianceProcessingUnit">
+		<id property="index1Name" column="INDEX1_NAME" />
+		<id property="index2Name" column="INDEX2_NAME" />
+		<id property="date" column="DATE" />
+		<result property="index1MonthlyReturn" column="INDEX1_MONTHLY_RETURN" />
+		<result property="index2MonthlyReturn" column="INDEX2_MONTHLY_RETURN" />
+	</resultMap>
+	
+	
+	<!-- Insert Queries -->
+	
+	<insert id="insertHistoricalIndexRawDatas" parameterType="java.util.List">
+		INSERT INTO HISTORICAL_INDEX_RAW_DATA
+		(INDEX_NAME, DATE, OPEN_PRICE, HIGH_PRICE, LOW_PRICE, CLOSE_PRICE, ADJ_CLOSE_PRICE, SHARES_TRADED, TURNOVER)
+		VALUES
+		<foreach collection="list" item="element" index="index" open="(" separator="),(" close=")">
+			#{element.indexName}, #{element.date}, #{element.openPrice}, #{element.highPrice}, #{element.lowPrice},
+			#{element.closePrice}, #{element.adjClosePrice}, #{element.sharesTraded}, #{element.turnover} 
+		</foreach>
+	</insert>
+	
+	<insert id="insertHistoricalIndexDatas" parameterType="java.util.List">
+		INSERT INTO HISTORICAL_INDEX_DATA
+		(INDEX_NAME, DATE, OPEN_PRICE, HIGH_PRICE, LOW_PRICE, CLOSE_PRICE, ADJ_CLOSE_PRICE, MONTHLY_RETURN, SHARES_TRADED, TURNOVER)
+		VALUES
+		<foreach collection="list" item="element" index="index" open="(" separator="),(" close=")">
+			#{element.indexName}, #{element.date}, #{element.openPrice}, #{element.highPrice}, #{element.lowPrice},
+			#{element.closePrice}, #{element.adjClosePrice}, #{element.monthlyReturn}. #{element.sharesTraded}, #{element.turnover} 
+		</foreach>
+	</insert>
+		
+	<insert id="insertHistoricalIndexCoefficientDatas" parameterType="java.util.List">
+		INSERT INTO HISTORICAL_INDEX_COEFFICENT_DATA
+		(INDEX_NAME, SMB_CO, HML_CO, WML_CO, EXCESS_RETURN_CO, ALPHA)
+		VALUES
+		<foreach collection="list" item="element" index="index" open="(" separator="),(" close=")">
+			#{element.indexName}, #{element.smbCo}, #{element.hmlCo}, #{element.wmlCo},
+			#{element.excessReturnCo}, #{element.alpha} 
+		</foreach>
+	</insert>
+	
+	<insert id="insertHistoricalIndexCovarianceDatas" parameterType="java.util.List">
+		INSERT INTO HISTORICAL_INDEX_COVARIANCE_DATA
+		(INDEX_NAME1, INDEX_NAME2, COVARIANCE)
+		VALUES
+		<foreach collection="list" item="element" index="index" open="(" separator="),(" close=")">
+			#{element.indexName1}, #{element.indexName2}, #{element.covariance} 
+		</foreach>
+	</insert>
+	
+
+	<!-- Select Queries -->
+	
+	<select id="getHistorivalIndexRawDatas" resultMap="HistoricalIndexRawDataMap">
+		SELECT * FROM HISTORICAL_INDEX_RAW_DATA
+	</select>
+	
+	<select id="getHistoricalIndexMonthEndData" resultMap="HistoricalIndexDataMap">
+		SELECT
+			HIRD.*,
+			(((HIRD.CLOSE_PRICE-LAG(HIRD.CLOSE_PRICE) OVER HIRD_WINDOW)*100)/LAG(HIRD.CLOSE_PRICE) OVER HIRD_WINDOW) AS "MONTHLY_RETURN"
+		FROM
+			HISTORICAL_INDEX_RAW_DATA AS HIRD,
+			(
+				SELECT DISTINCT
+					HIRD.INDEX_NAME, MAX(HIRD.DATE) AS MONTH_END_DATE, TO_CHAR(HIRD.DATE, 'MON-YYYY') AS MONTH_YEAR
+				FROM
+					HISTORICAL_INDEX_RAW_DATA AS HIRD
+				GROUP BY
+					HIRD.INDEX_NAME, MONTH_YEAR
+				ORDER BY
+					HIRD.INDEX_NAME, MONTH_END_DATE DESC
+			) AS HIRD_MONTH_END
+		
+		WHERE
+			HIRD.INDEX_NAME = HIRD_MONTH_END.INDEX_NAME
+			AND HIRD.DATE = HIRD_MONTH_END.MONTH_END_DATE
+		WINDOW 
+			HIRD_WINDOW AS (PARTITION BY HIRD.INDEX_NAME ORDER BY HIRD.INDEX_NAME, HIRD.DATE)
+	</select>
+	
+	<select id="loadHistoricalMonthEndData" resultType="boolean">
+		SELECT LoadHistoricalMonthEndData()
+	</select>
+	
+	<select id="loadHistoricalIndexExcessReturnData" resultType="boolean">
+		SELECT LoadHistoricalIndexExcessReturnData()
+	</select>
+	
+	<select id="getHistoricalDataForIndex" parameterType="string" resultMap="HistoricalIndexDataMap">
+		SELECT * FROM HISTORICAL_INDEX_DATA AS HID WHERE HID.INDEX_NAME=#{indexName}
+	</select>
+	
+	<select id="getHistoricalDataForIndexAndYear" parameterType="map" resultMap="HistoricalIndexDataMap">
+		SELECT * FROM HISTORICAL_INDEX_DATA AS HID WHERE HID.INDEX_NAME=#{indexName} AND TO_CHAR(HID.DATE, 'YYYY')=#{year}
+	</select>
+	
+	<select id="getAllIndexNames" resultType="string">
+		SELECT DISTINCT
+			HID.INDEX_NAME
+		FROM
+			HISTORICAL_INDEX_DATA AS HID
+		ORDER BY
+			HID.INDEX_NAME
+	</select>
+	
+	<select id="getHistoricalIndexCovarianceProceesingUnits" parameterType="map" 
+		resultMap="HistoricalIndexCovarianceProcessingUnitMap">
+		SELECT
+			INDEX1_DATA.INDEX_NAME AS "INDEX1_NAME",
+			INDEX2_DATA.INDEX_NAME AS "INDEX2_NAME",
+			INDEX1_DATA.MONTHLY_EXCESS_RETURN AS "INDEX1_MONTHLY_RETURN",
+			INDEX2_DATA.MONTHLY_EXCESS_RETURN AS "INDEX2_MONTHLY_RETURN",
+			INDEX1_DATA.DATE
+		FROM
+			(SELECT INDEX_NAME, DATE, CLOSE_PRICE, MONTHLY_EXCESS_RETURN FROM HISTORICAL_INDEX_DATA WHERE INDEX_NAME=#{indexName1} ORDER BY DATE) AS INDEX1_DATA,
+			(SELECT INDEX_NAME, DATE, CLOSE_PRICE, MONTHLY_EXCESS_RETURN FROM HISTORICAL_INDEX_DATA WHERE INDEX_NAME=#{indexName2} ORDER BY DATE) AS INDEX2_DATA
+		WHERE
+			TO_CHAR(INDEX1_DATA.DATE, 'MON-YYYY')=TO_CHAR(INDEX2_DATA.DATE, 'MON-YYYY')
+			AND INDEX1_DATA.MONTHLY_EXCESS_RETURN IS NOT NULL
+			AND INDEX2_DATA.MONTHLY_EXCESS_RETURN IS NOT NULL
+		ORDER BY
+			INDEX1_DATA.DATE
+	</select>
+	
+	<select id="getHistoricalIndexCoefficientProceesingUnits" parameterType="string" 
+		resultMap="HistoricalIndexCoefficientProcessingUnitMap">
+		SELECT
+			HID.INDEX_NAME,
+			HMD.DATE,
+			HMD.SMB_PERCENT,
+			HMD.HML_PERCENT,
+			HMD.WML_PERCENT,
+			HMD.EXCESS_RETURN,
+			HID.MONTHLY_EXCESS_RETURN
+		FROM
+			HISTORICAL_INDEX_DATA AS HID,
+			HISTORICAL_MARKET_DATA AS HMD
+		WHERE
+			TO_CHAR(HID.DATE, 'MON-YYYY')=TO_CHAR(HMD.DATE, 'MON-YYYY')
+			AND HID.MONTHLY_EXCESS_RETURN IS NOT NULL
+			AND HID.INDEX_NAME=#{indexName}
+		ORDER BY
+			HMD.DATE
+	</select>
+	
+</mapper>

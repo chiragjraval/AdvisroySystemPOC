@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- DAO configuration contexts -->
+	<import resource="classpath:com/advisory/config/spring/dao/historicaldatadao-context.xml"/>
+	
+	<bean id="nseDataLoadHelper" class="com.advisory.data.historical.load.helper.NseDataLoadHelper" />
+    <bean id="bseDataLoadHelper" class="com.advisory.data.historical.load.helper.BseDataLoadHelper" />
+	
+	<bean id="historicalDataService" class="com.advisory.service.business.HistoricalDataService">
+		<property name="historicalDataDao" ref="historicalDataDao"></property>
+	</bean>
+
+</beans>

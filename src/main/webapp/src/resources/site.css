@@ -1,0 +1,13 @@
+body {
+	padding-top: 50px;
+}
+
+.col-vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+.btn {
+	border-radius: 0px;
+}

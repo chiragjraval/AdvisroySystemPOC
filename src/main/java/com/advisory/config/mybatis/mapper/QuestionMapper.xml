@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.advisory.dao.business.QuestionDao">
+	
+	<!-- Result Maps -->
+	<resultMap id="QuestionSetMap" type="QuestionSet" >
+		<id property="questionSetId" column="QUESTION_SET_ID" />
+		<result property="questionSetDescription" column="QUESTION_SET_DESCRIPTION" />
+		<collection property="questions" resultMap="QuestionMap" columnPrefix="Q_" />
+	</resultMap>
+	
+	<resultMap id="QuestionMap" type="Question" >
+		<id property="questionId" column="QUESTION_ID" />
+		<result property="questionSetId" column="QUESTION_SET_ID" />
+		<result property="questionDescription" column="QUESTION_DESCRIPTION" />
+		<result property="questionTemplate" column="QUESTION_TEMPLATE" />
+		<result property="questionSequence" column="QUESTION_SEQUENCE" />
+		<collection property="questionOptions" resultMap="QuestionOptionMap" columnPrefix="QO_" />
+		<collection property="questionCharts" resultMap="QuestionChartMap" columnPrefix="QC_" />
+	</resultMap>
+
+	<resultMap id="QuestionOptionMap" type="QuestionOption">
+		<id property="optionId" column="OPTION_ID" />
+		<result property="questionId" column="QUESTION_ID" />
+		<result property="optionText" column="OPTION_TEXT" />
+		<result property="optionDescription" column="OPTION_DESCRIPTION" />
+		<result property="optionSequence" column="OPTION_SEQUENCE" />
+	</resultMap>
+	
+
+	<resultMap id="QuestionChartMap" type="QuestionChart">
+		<id property="chartId" column="CHART_ID" />
+		<result property="questionId" column="QUESTION_ID" />
+		<result property="chartElementId" column="CHART_ELEMENT_ID" />
+		<result property="chartConfig" column="CHART_CONFIG" />
+		<result property="chartDescription" column="CHART_DESCRIPTION" />
+		<result property="chartSequence" column="CHART_SEQUENCE" />
+	</resultMap>
+
+
+	<!-- Queries -->
+	<select id="getQuestionSets" resultMap="QuestionSetMap">
+		SELECT 
+			QS.QUESTION_SET_ID,
+			QS.QUESTION_SET_DESCRIPTION,
+			Q.QUESTION_ID AS "Q_QUESTION_ID",
+			Q.QUESTION_SET_ID AS "Q_QUESTION_SET_ID",
+			Q.QUESTION_DESCRIPTION AS "Q_QUESTION_DESCRIPTION",
+			Q.QUESTION_TEMPLATE AS "Q_QUESTION_TEMPLATE",
+			Q.QUESTION_SEQUENCE AS "Q_QUESTION_SEQUENCE",
+			QO.OPTION_ID AS "Q_QO_OPTION_ID",
+			QO.QUESTION_ID AS "Q_QO_QUESTION_ID",
+			QO.OPTION_TEXT AS "Q_QO_OPTION_TEXT",
+			QO.OPTION_DESCRIPTION AS "Q_QO_OPTION_DESCRIPTION",
+			QO.OPTION_SEQUENCE AS "Q_QO_OPTION_SEQUENCE",
+			QC.CHART_ID AS "Q_QC_CHART_ID",
+			QC.QUESTION_ID AS "Q_QC_QUESTION_ID",
+			QC.CHART_ELEMENT_ID AS "Q_QC_CHART_ELEMENT_ID",
+			QC.CHART_CONFIG AS "Q_QC_CHART_CONFIG",
+			QC.CHART_DESCRIPTION AS "Q_QC_CHART_DESCRIPTION",
+			QC.CHART_SEQUENCE AS "Q_QC_CHART_SEQUENCE"
+		FROM
+			QUESTION_SET AS QS
+			LEFT JOIN QUESTION AS Q
+				ON QS.QUESTION_SET_ID = Q.QUESTION_SET_ID
+			LEFT JOIN QUESTION_OPTION AS QO
+				ON Q.QUESTION_ID = QO.QUESTION_ID
+			LEFT JOIN QUESTION_CHART AS QC
+				ON Q.QUESTION_ID = QC.QUESTION_ID
+		ORDER BY
+			Q.QUESTION_SEQUENCE,
+			QO.OPTION_SEQUENCE,
+			QC.CHART_SEQUENCE
+	</select>
+	
+	<select id="getQuestions" resultMap="QuestionMap">
+		SELECT 
+			Q.QUESTION_ID,
+			Q.QUESTION_SET_ID,
+			Q.QUESTION_DESCRIPTION,
+			Q.QUESTION_TEMPLATE,
+			Q.QUESTION_SEQUENCE,
+			QO.OPTION_ID AS "QO_OPTION_ID",
+			QO.QUESTION_ID AS "QO_QUESTION_ID",
+			QO.OPTION_TEXT AS "QO_OPTION_TEXT",
+			QO.OPTION_DESCRIPTION AS "QO_OPTION_DESCRIPTION",
+			QO.OPTION_SEQUENCE AS "QO_OPTION_SEQUENCE",
+			QC.CHART_ID AS "QC_CHART_ID",
+			QC.QUESTION_ID AS "QC_QUESTION_ID",
+			QC.CHART_ELEMENT_ID AS "QC_CHART_ELEMENT_ID",
+			QC.CHART_CONFIG AS "QC_CHART_CONFIG",
+			QC.CHART_DESCRIPTION AS "QC_CHART_DESCRIPTION",
+			QC.CHART_SEQUENCE AS "QC_CHART_SEQUENCE" 
+		FROM
+			QUESTION AS Q
+			LEFT JOIN QUESTION_OPTION AS QO
+				ON Q.QUESTION_ID = QO.QUESTION_ID
+			LEFT JOIN QUESTION_CHART AS QC
+				ON Q.QUESTION_ID = QC.QUESTION_ID
+		ORDER BY
+			Q.QUESTION_SEQUENCE,
+			QO.OPTION_SEQUENCE,
+			QC.CHART_SEQUENCE
+	</select>
+	
+</mapper>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+	<title>Advisory Platform</title>
+	
+	<!-- JQuery minified JS -->
+	<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	
+	<!-- Bootstrap Latest compiled and minified CSS and JS --> 
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  
+  	<!-- Font-Awesome CSS -->
+  	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.css" />
+  	<link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+	
+  </head>
+  
+  <body>
+    <my-app>
+    	<!-- Modal -->
+		<div id="appLoadingModal" class="modal show" style="margin-top:50%" role="dialog">
+ 			<div class="modal-dialog">
+    			<!-- Modal content-->
+    			<div class="modal-content">
+					<div class="modal-body text-center">
+        				<i class="fa fa-spinner fa-spin fa-2x"></i> <br/>
+        				Loading Application...
+      				</div>
+    			</div>
+ 			</div>
+		</div>
+    </my-app>
+    
+    
+    
+    <!-- Site custom CSS -->
+	<link rel="stylesheet" href="src/resources/site.css" />
+	<link rel="stylesheet" href="src/resources/sidebar/sidebar.css" />
+	<link rel="stylesheet" href="src/resources/bootstrap-social/bootstrap-social.css" />
+	
+	<!-- Highcharts Javascripts -->
+	<script src="http://code.highcharts.com/highcharts.js"></script>
+	<script src="http://code.highcharts.com/modules/exporting.js"></script>
+  	
+  	<!-- AngularJS 2 and Dependencies -->
+    <script src="node_modules/traceur/bin/traceur-runtime.js"></script>
+    <script src="node_modules/es6-module-loader/dist/es6-module-loader.js"></script>
+    <script src="node_modules/systemjs/dist/system.js"></script>
+    <script src="node_modules/angular2/bundles/angular2.min.js"></script>
+    <script src="node_modules/angular2/bundles/http.min.js"></script>
+    <script src="node_modules/angular2/bundles/router.dev.js"></script>
+    
+    <script>
+    	System.import('src/app');
+    </script>
+  </body>
+  
+</html>
